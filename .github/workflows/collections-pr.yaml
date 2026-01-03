@@ -58,4 +58,5 @@ permissions:
   actions: read
   checks: write
   contents: read
+  packages: read
   pull-requests: write
