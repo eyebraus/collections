@@ -1,0 +1,100 @@
+name: collections-official
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          # Allows us to check the previous version of the package.json file
+          fetch-depth: 2
+
+      - name: Configure npm for GitHub Packages
+        run: |
+          echo "@eyebraus:registry=https://npm.pkg.github.com" >> .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc
+
+      - name: Install dependencies
+        run: npm install --include dev
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm run test
+
+      - name: Check if version changed
+        id: version-check
+        run: |
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+
+          # Get the previous version from the previous commit
+          if git rev-parse HEAD~1 >/dev/null 2>&1; then
+            git show HEAD~1:package.json > /tmp/previous-package.json 2>/dev/null || true
+            if [ -f /tmp/previous-package.json ]; then
+              PREVIOUS_VERSION=$(node -p "require('/tmp/previous-package.json').version" 2>/dev/null || echo "")
+            else
+              PREVIOUS_VERSION=""
+            fi
+          else
+            PREVIOUS_VERSION=""
+          fi
+
+          if [ -z "$PREVIOUS_VERSION" ] || [ "$CURRENT_VERSION" != "$PREVIOUS_VERSION" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+            if [ -n "$PREVIOUS_VERSION" ]; then
+              echo "Version changed from $PREVIOUS_VERSION to $CURRENT_VERSION"
+            else
+              echo "No previous version found, publishing $CURRENT_VERSION"
+            fi
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "Version unchanged: $CURRENT_VERSION"
+          fi
+
+      - name: Publish to GitHub Packages
+        if: steps.version-check.outputs.changed == 'true'
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: collections-official
+          path: |
+            ./**/lib/
+            ./**/spec/
+            ./**/tsconfig.tsbuildinfo
+
+      - name: Publish unit test results
+        if: always()
+        uses: mikepenz/action-junit-report@v5
+        with:
+          check_name: Unit tests (collections-official)
+          comment: true
+          detailed_summary: true
+          group_suite: true
+          report_paths: '**/spec/junit.xml'
+          require_tests: true
+
+      - name: Upload coverage reports to Codecov
+        if: always()
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  actions: read
+  checks: write
+  contents: read
+  packages: write
+  pull-requests: write
