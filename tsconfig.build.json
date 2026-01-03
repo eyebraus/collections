@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+        "rootDir": "src",
+        "tsBuildInfoFile": "tsconfig.tsbuildinfo",
+    },
+    "exclude": ["eslint.config.ts", "node_modules", "**/*.spec.ts", "**/*.spec.tsx", "./lib/**/*", "./scripts/**/*", "./spec/**/*"],
+    "extends": "./tsconfig.json",
+    "include": ["**/*.ts", "**/*.tsx"]
+}

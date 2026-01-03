@@ -9,8 +9,8 @@
 !package-lock.json
 !package.json
 !src/*
+!tsconfig.build.json
 !tsconfig.json
-!tsconfig.base.json
 
 # Include scripts
 !scripts/common/*

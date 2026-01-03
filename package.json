@@ -42,7 +42,7 @@
         "registry": "https://npm.pkg.github.com"
     },
     "scripts": {
-        "build": "npx tsc --build",
+        "build": "npx tsc --build tsconfig.build.json",
         "clean": "./scripts/host/clean.mts",
         "container-build": "./scripts/host/build.mts",
         "container-test": "./scripts/host/test.mts",

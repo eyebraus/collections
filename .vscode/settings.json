@@ -1,9 +1,4 @@
 {
-    // ESLint settings
-    "eslint.options": {
-        "flags": ["unstable_ts_config"],
-    },
-
     // Prettier settings
     "prettier.arrowParens": "always",
     "prettier.bracketSameLine": false,

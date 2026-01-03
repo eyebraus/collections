@@ -28,7 +28,7 @@ RUN chmod -R a+x scripts/container/stage.mts
 RUN chmod -R a+x scripts/container/test.mts
 
 # Copy other files needed for subsequent targets
-COPY babel.config.cts eslint.config.ts jest.config.json tsconfig.base.json tsconfig.json ./
+COPY babel.config.cts eslint.config.ts jest.config.json tsconfig.build.json tsconfig.json ./
 COPY --parents src/* ./
 
 # ================

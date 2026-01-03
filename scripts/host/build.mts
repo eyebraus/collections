@@ -19,7 +19,7 @@ const { container, tag: tags } = yargs(hideBin(process.argv))
 
 const dockerContextDirectory = resolve(fileDirectory, '../..');
 const dockerfile = resolve(fileDirectory, '../../dockerfile');
-const privateNpmrc = resolve(process.env.HOME!, '.npmrc');
+const privateNpmrc = resolve(process.env.HOME ?? '', '.npmrc');
 
 // Extract GitHub access token from private .npmrc file
 process.env.GITHUB_ACCESS_TOKEN = await readFile(privateNpmrc, 'utf8');
