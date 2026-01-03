@@ -1,0 +1,22 @@
+{
+    "collectCoverageFrom": ["src/**/*.{ts,tsx}", "!src/**/*.spec.{ts,tsx}"],
+    "coverageDirectory": "./spec",
+    "coverageReporters": ["json", "text"],
+    "displayName": "collections",
+    "extensionsToTreatAsEsm": [".ts", ".tsx"],
+    "moduleFileExtensions": ["ts", "tsx", "js"],
+    "reporters": [
+        [
+            "jest-html-reporter",
+            {
+                "includeFailureMsg": true,
+                "includeSuiteFailure": true,
+                "outputPath": "./spec/test-results.html",
+                "pageTitle": "@eyebraus/collections"
+            }
+        ],
+        ["jest-junit", { "outputDirectory": "./spec" }],
+        "summary"
+    ],
+    "testEnvironment": "node"
+}

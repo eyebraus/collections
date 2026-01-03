@@ -1,0 +1,62 @@
+name: collections-pr
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Configure npm for GitHub Packages
+        run: |
+          echo "@eyebraus:registry=https://npm.pkg.github.com" >> .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc
+
+      - name: Install dependencies
+        run: npm install --include dev
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm run test
+
+      - name: Upload artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: collections-pr
+          path: |
+            ./**/lib/
+            ./**/spec/
+            ./**/tsconfig.tsbuildinfo
+
+      - name: Publish unit test results
+        if: always()
+        uses: mikepenz/action-junit-report@v5
+        with:
+          check_name: Unit tests (collections-pr)
+          comment: true
+          detailed_summary: true
+          group_suite: true
+          report_paths: '**/spec/junit.xml'
+          require_tests: true
+
+      - name: Upload coverage reports to Codecov
+        if: always()
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  actions: read
+  checks: write
+  contents: read
+  packages: read
+  pull-requests: write

@@ -1,0 +1,17 @@
+# Ignore everything by default
+*
+
+# Include necessary files from root
+!.npmrc
+!babel.config.cts
+!eslint.config.ts
+!jest.config.json
+!package-lock.json
+!package.json
+!src/*
+!tsconfig.build.json
+!tsconfig.json
+
+# Include scripts
+!scripts/common/*
+!scripts/container/*
